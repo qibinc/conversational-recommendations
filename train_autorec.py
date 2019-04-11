@@ -74,7 +74,7 @@ def train(model, batch_loader, nb_epochs, patience, batch_input, save_path,
             loss = criterion(outputs, batch["target"])
             loss.backward()
             optimizer.step()
-            loss = loss.data[0]
+            loss = loss.item()
 
             # keep losses in memory
             losses.append(loss)

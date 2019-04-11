@@ -111,7 +111,7 @@ class SentimentAnalysis(nn.Module):
             target = batch["forms"].cpu().data.numpy()
             output = self.forward(batch)
             loss = criterion(output, batch["forms"])
-            losses.append(loss.data[0])
+            losses.append(loss.item())
 
             Isugg = (output[0] > 0.5).squeeze().cpu().long()
             # get the arg max for the categorical output

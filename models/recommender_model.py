@@ -7,14 +7,14 @@ from tqdm import tqdm
 import os
 
 
-from decoders import SwitchingDecoder
+from .decoders import SwitchingDecoder
 from utils import sort_for_packed_sequence
 
 import config
-from hierarchical_rnn import HRNN
-from sentiment_analysis import SentimentAnalysis
-from autorec import AutoRec
-from gensen import GenSenSingle
+from .hierarchical_rnn import HRNN
+from .sentiment_analysis import SentimentAnalysis
+from .autorec import AutoRec
+from .gensen import GenSenSingle
 
 
 class RecommendFromDialogue(nn.Module):
@@ -376,7 +376,7 @@ class Recommender(nn.Module):
             loss += kl_coefficient + kld
         # backward pass
         loss.backward()
-        return loss.data[0]
+        return loss.item()
 
     def evaluate(self, batch_loader, criterion, subset="valid"):
         """
@@ -407,7 +407,7 @@ class Recommender(nn.Module):
             target = batch["target"].view(-1, max_seq_length).index_select(0, idx)
 
             loss = criterion(outputs.view(-1, vocab_size), target.view(-1))
-            losses.append(loss.data[0])
+            losses.append(loss.item())
         print("{} loss : {}".format(subset, np.mean(losses)))
         self.train()
         return np.mean(losses)

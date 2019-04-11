@@ -3,10 +3,6 @@ import csv
 import re
 import argparse
 import os
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf8')
 
 
 def merge_indexes(matched_db_path, movielens_path, write_to):

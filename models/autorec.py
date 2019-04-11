@@ -149,7 +149,7 @@ class AutoRec(nn.Module):
             # compute output and loss
             output = self.forward(batch["input"])
             loss = criterion(output, batch["target"])
-            losses.append(loss.data[0])
+            losses.append(loss.item())
         # normalize loss and reset nb of ratings observed
         final_loss = criterion.normalize_loss_reset(np.sum(losses))
         print("{} loss with input={} : {}".format(subset, batch_input, final_loss))

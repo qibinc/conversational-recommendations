@@ -3,11 +3,7 @@ import csv
 import re
 import argparse
 import os
-import sys
 from collections import defaultdict
-
-reload(sys)
-sys.setdefaultencoding("utf8")
 
 
 def get_movies_db(path):

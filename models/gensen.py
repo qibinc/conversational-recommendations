@@ -85,14 +85,16 @@ class GenSen(nn.Module):
             open(os.path.join(
                 self.model_folder,
                 '%s_vocab.pkl' % (self.filename_prefix_1)
-            ))
+            ), 'rb'),
+            encoding='latin1'
         )
 
         model_2_vocab = pickle.load(
             open(os.path.join(
                 self.model_folder,
                 '%s_vocab.pkl' % (self.filename_prefix_2)
-            ))
+            ), 'rb'),
+            encoding='latin1'
         )
 
         # Word to index mappings
@@ -357,7 +359,8 @@ class GenSenSingle(nn.Module):
             open(os.path.join(
                 self.model_folder,
                 '%s_vocab.pkl' % (self.filename_prefix)
-            ))
+            ), 'rb'),
+            encoding='latin1'
         )
 
         # Word to index mappings
@@ -398,7 +401,7 @@ class GenSenSingle(nn.Module):
         pretrained_embeddings = h5py.File(self.pretrained_emb)
         pretrained_embedding_matrix = pretrained_embeddings['embedding'].value
         pretrain_vocab = \
-            pretrained_embeddings['words_flatten'].value.split('\n')
+            str(pretrained_embeddings['words_flatten'].value).split('\\n')
         pretrain_word2id = {
             word: ind for ind, word in enumerate(pretrain_vocab)
         }

@@ -85,12 +85,12 @@ class MlBatchLoader(object):
         # self.id2movies = load_movies(self.movie_path)
         # self.id2index = {id: i for (i, id) in enumerate(self.id2movies)}
         self.id2index = load_movies_merged(self.movie_path)
-        self.n_movies = np.max(self.id2index.values()) + 1
+        self.n_movies = np.max(list(self.id2index.values())) + 1
         print("Loading movie ratings from {}".format(self.data_path))
         self.ratings = {subset: load_ratings(path, as_array=False)
                         for subset, path in self.data_path.items()}
         # list of userIds for each subset
-        self.keys = {subset: ratings.keys() for subset, ratings in self.ratings.items()}
+        self.keys = {subset: list(ratings.keys()) for subset, ratings in self.ratings.items()}
 
     def load_batch(self, subset="train", batch_input="full", max_num_inputs=None, ratings01=None):
         if batch_input == 'random_noise' and max_num_inputs is None:

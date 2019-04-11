@@ -10,11 +10,6 @@ from torch.autograd import Variable
 
 from utils import tokenize
 
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf8')
-
 
 def load_data(path):
     """
@@ -64,7 +59,7 @@ class RedditBatchLoader(object):
         print("Loading and processing reddit data")
         self.conversation_data = {key: load_data(val) for key, val in self.data_path.items()}
         # load vocabulary
-        self.train_vocabulary = pickle.load(open(self.vocab_path))
+        self.train_vocabulary = pickle.load(open(self.vocab_path, 'rb'), encoding='latin1')
         print("Vocabulary size : {} words.".format(len(self.train_vocabulary)))
         if self.shuffle_data:
             # shuffle each subset

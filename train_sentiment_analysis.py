@@ -91,7 +91,7 @@ def train(model, batch_loader, baseline, save_path, nb_epochs, patience,
             # optimize
             loss.backward()
             optimizer.step()
-            loss = loss.data[0]
+            loss = loss.item()
 
             # keep losses in memory
             losses.append(loss)
