@@ -1,3 +1,4 @@
+from collections import defaultdict
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,6 +6,7 @@ from torch.autograd import Variable
 import numpy as np
 from tqdm import tqdm
 import os
+from sklearn.metrics import recall_score
 
 
 from .decoders import SwitchingDecoder
@@ -389,6 +391,7 @@ class Recommender(nn.Module):
         n_batches = batch_loader.n_batches[subset]
 
         losses = []
+        recalls = defaultdict(list)
         for _ in tqdm(range(n_batches)):
             # load batch
             batch = batch_loader.load_batch(subset=subset)
@@ -408,6 +411,20 @@ class Recommender(nn.Module):
 
             loss = criterion(outputs.view(-1, vocab_size), target.view(-1))
             losses.append(loss.item())
+
+            recommendation_idx = (target.view(-1) >= len(self.train_vocab))
+            if recommendation_idx.sum() == 0:
+                continue
+            recommendation_target = target.view(-1)[recommendation_idx] - len(self.train_vocab)
+            recommendation_outputs = outputs.view(-1, vocab_size)[recommendation_idx][:, len(self.train_vocab):]
+            pred, pred_idx = torch.topk(recommendation_outputs, k=100, dim=1)
+            def hit(true, pred_list):
+                return int(true in pred_list)
+            for b in range(recommendation_target.shape[0]):
+                recalls['1'].append(hit(recommendation_target[b].item(), pred_idx[b][:1].tolist()))
+                recalls['10'].append(hit(recommendation_target[b].item(), pred_idx[b][:10].tolist()))
+                recalls['50'].append(hit(recommendation_target[b].item(), pred_idx[b][:50].tolist()))
         print("{} loss : {}".format(subset, np.mean(losses)))
+        print(f"recall@1 = {np.mean(recalls['1'])}, recall@10 = {np.mean(recalls['10'])}, recall@50 = {np.mean(recalls['50'])}")
         self.train()
         return np.mean(losses)
