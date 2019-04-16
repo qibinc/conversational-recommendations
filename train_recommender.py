@@ -97,6 +97,7 @@ def train(model, batch_loader, nb_epochs, patience, save_path):
             best_loss, patience_count = save_model(val_loss, best_loss, epoch, patience_count)
             if patience_count >= patience:
                 print("Early stopping, {} epochs without best".format(patience_count))
+                model.evaluate(batch_loader=batch_loader, criterion=criterion, subset="test")
                 return
 
     print("Training done.")
