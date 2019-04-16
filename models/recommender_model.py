@@ -412,7 +412,18 @@ class Recommender(nn.Module):
             loss = criterion(outputs.view(-1, vocab_size), target.view(-1))
             losses.append(loss.item())
 
-            recommendation_idx = (target.view(-1) >= len(self.train_vocab))
+            # NOTE: one movie occurrence appears multiple times in batch["target"]
+            # should only evaluate the first token
+            recommendation_idx = (target.view(-1) >= len(self.train_vocab)) & (
+                target
+                != torch.cat(
+                    [
+                        torch.zeros(target.shape[0], 1, dtype=torch.long).cuda() - 1,
+                        target[:, :-1],
+                    ],
+                    dim=1
+                )
+            ).view(-1)
             if recommendation_idx.sum() == 0:
                 continue
             recommendation_target = target.view(-1)[recommendation_idx] - len(self.train_vocab)
